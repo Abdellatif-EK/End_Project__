@@ -3,7 +3,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 # from django.db import models this is a test
-
+# another test
 
 def upload_to(instance,filename):
     return 'equipement_images/{filename}'.format(filename=filename)
