@@ -5,7 +5,8 @@ import utilities from './utilities';
 import other from './other';
 import administration from './Administration';
 import acceuil from './acceuil';
-
+import intervention from './demande_analyste';
+import demande_technicien from './demande_technicien';
 // Function to get user role from local storage
 
 const getUserRole = () => {
@@ -26,9 +27,9 @@ if (userRole === 'administrateur') {
   // menuItems.items = [acceuil, dashboard, pages, utilities, administration, other];
   menuItems.items = [acceuil,pages,other];
 }else if (userRole === 'analyst'){
-  menuItems.items = [acceuil,other];
-}else{
-
+  menuItems.items = [acceuil, intervention,other];
+}else if(userRole === 'technicien'){
+  menuItems.items = [acceuil, demande_technicien,other];
 }
 
 export default menuItems;

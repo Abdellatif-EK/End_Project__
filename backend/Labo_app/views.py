@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.http.response import JsonResponse, HttpResponse
 from rest_framework.parsers import JSONParser
@@ -487,6 +486,52 @@ class Demande_API(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+
+class Demande_Analyste(APIView):
+    
+    def put(self, request, pk):
+        try:
+            demande = Demande.objects.get(pk=pk)
+        except Demande.DoesNotExist:
+            return Response({'error': 'Demande not found'}, status=status.HTTP_404_NOT_FOUND)
+        # Update the request data before passing to serializer
+        update_data = request.data.copy() # Automatically set the state to "en_cours"
+        serializer = DemandeSerializer(demande, data=update_data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        try:
+            demande = Demande.objects.get(pk=pk)
+            demande.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Demande.DoesNotExist:
+            return Response({'error': 'Demande not found'}, status=status.HTTP_404_NOT_FOUND)
+    model = Demande
+
+    def get_queryset(self):
+        analyste_id = self.kwargs.get('analyste_id')
+        return Demande.objects.filter(etat='traite', analyste_id=analyste_id)
+
+    def render_to_response(self, context, **response_kwargs):
+        demandes = self.get_queryset()
+        demandes_data = [
+            {
+                'id': demande.id,
+                'date_demande': demande.date_demande,
+                'date_debut': demande.date_debut,
+                'date_fin': demande.date_fin,
+                'etat': demande.etat,
+                'description': demande.description,
+                'equipement': demande.equipement.appareil,
+                'analyste': demande.analyste.username if demande.analyste else None,
+                'technicien': demande.technicien.username if demande.technicien else None,
+            }
+            for demande in demandes
+        ]
+        return JsonResponse(demandes_data, safe=False)
 
 
 class DemandeByEquipementView(ListAPIView):

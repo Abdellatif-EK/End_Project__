@@ -19,6 +19,10 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const AppareilDetail = Loadable(lazy(() => import('views/administration/AppareilDetail')));
 const Matrice = Loadable(lazy(() => import('views/components/Matrice')));
 const Logout = Loadable(lazy(() => import('views/profile/Logout')));
+const DefinirDemande = Loadable(lazy(() => import('views/intervention/DefinirDemande')));
+const DemandesAnalyste = Loadable(lazy(() => import('views/intervention/DemandesAnalyste')));
+const DemandesTraitees = Loadable(lazy(() => import('views/intervention/DemandesTraitees')));
+
 const MainRoutes = {
   path: '/',
   element: (
@@ -27,7 +31,7 @@ const MainRoutes = {
     </AuthGuard>
   ),
   children: [
-    { path: '/',element: <Acceuil /> },
+    { path: '/', element: <Acceuil /> },
     // { path: '/', element: <DashboardDefault /> },
     { path: 'acceuil', children: [{ path: 'default', element: <Acceuil /> }] },
     { path: 'dashboard', children: [{ path: 'default', element: <DashboardDefault /> }] },
@@ -39,23 +43,32 @@ const MainRoutes = {
     { path: 'administration', children: [{ path: 'gestion-utilisateurs', element: <GestionUtilisateurs /> }] },
     { path: 'administration', children: [{ path: 'appareil-detail/:id', element: <AppareilDetail /> }] },
     { path: 'administration', children: [{ path: 'gestion-matrices', element: <GestionMatrices /> }] },
-    { 
+    {
       path: 'components',
       children: [
         { path: 'add-user', element: <AddUser /> },
-        { path: 'matrice/:id', element: <Matrice /> },
-      ],
+        { path: 'matrice/:id', element: <Matrice /> }
+      ]
     },
     {
       path: 'laboratoires',
       children: [
         { path: 'microbiologie', element: <LaboratoireMicrobiologie /> },
-        { path: 'physyco-chimique', element: <LaboratoirePhysycoChimique /> },
-      ],
-    }, 
+        { path: 'physyco-chimique', element: <LaboratoirePhysycoChimique /> }
+      ]
+    },
     { path: 'sample-page', element: <SamplePage /> },
-    { path:'/profile/logout',element:<Logout/>},
-  ],
+    { path: '/profile/logout', element: <Logout /> },
+    {
+      path: 'intervention',
+      children: [
+        { path: '/intervention/definir-demande', element: <DefinirDemande /> },
+        { path: '/intervention/demandes-analyste', element: <DemandesAnalyste /> },
+        { path: '/intervention/demandes-analyste-traitees', element: <DemandesTraitees /> },
+      ]
+    },
+    
+  ]
 };
 
 export default MainRoutes;
