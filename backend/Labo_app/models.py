@@ -135,3 +135,27 @@ class Matrice(models.Model):
 #         BASSE = 'basse', 'Basse'
 #     date_demande = models.DateField(auto_now=True)
 #     type = models.CharField(max_length=10, choices=Type.choices, default=Type.INCIDENT)
+
+
+class Demande(models.Model):
+    Etat_CHOICES = [
+        ('nouvelle', 'nouvelle'),
+        ('en_cours', 'en_cours'),
+        ('verifie','verifie'),
+        ('reouverture','reouverture'),
+        ('traite','traite'),
+    ]
+    date_demande = models.DateField(auto_now=True)
+    date_debut = models.DateField(null=True)
+    date_fin = models.DateField(null=True)
+    etat = models.CharField(max_length=30, choices=Etat_CHOICES, default=Etat_CHOICES[0][0])
+    description = models.CharField(max_length=500, null=False)
+    
+    equipement = models.ForeignKey('Equipement', on_delete=models.CASCADE)
+    analyste = models.ForeignKey('Employe', on_delete=models.CASCADE,related_name='analyste')
+    technicien = models.ForeignKey('Employe', on_delete=models.CASCADE, null=True, blank=True,related_name='technicien')
+    
+    def __str__(self):
+        return f'Demande {self.id} - {self.date_demande} - {self.equipement.appareil} - {self.etat}'
+
+

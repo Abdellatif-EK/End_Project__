@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
-from Labo_app.models import Employe, Equipement, Laboratoire,Matrice,Unite
+from Labo_app.models import Employe, Equipement, Laboratoire,Matrice,Unite,Demande
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
@@ -44,9 +44,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = ['id', 'email', 'username', 'role'] 
 
-
-
-
 class EquipementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipement
@@ -71,4 +68,9 @@ class UniteSerializer(serializers.ModelSerializer):
 class MatriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Matrice
+        fields = '__all__'
+        
+class DemandeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Demande
         fields = '__all__'

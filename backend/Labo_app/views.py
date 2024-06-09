@@ -11,7 +11,7 @@ from .serializers import EmployeSerializer, MatriceSerializer
 from rest_framework.exceptions import AuthenticationFailed 
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
-from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
+from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,DemandeSerializer
 from rest_framework import permissions, status
 from .validations import custom_validation, validate_email, validate_password
 from rest_framework.authtoken.models import Token  # Import Token model
@@ -28,9 +28,9 @@ from django.middleware.csrf import get_token
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from .models import Equipement
+from .models import Equipement,Demande
 from .serializers import EquipementSerializer
-
+from rest_framework.generics import ListAPIView
 
 def csrf_token_view(request):
     return JsonResponse({'csrfToken': get_token(request)})
@@ -38,15 +38,49 @@ def csrf_token_view(request):
 class EquipementViewSet(viewsets.ModelViewSet):
     queryset = Equipement.objects.all()
     serializer_class = EquipementSerializer
+    
+class EmployeViewSet(viewsets.ModelViewSet):
+    queryset = Employe.objects.all()
+    serializer_class = EmployeSerializer
 
 class UniteViewSet(viewsets.ModelViewSet):
     queryset = Unite.objects.all()
     serializer_class = UniteSerializer
 
-
 class LaboratoireViewSet(viewsets.ModelViewSet):
     queryset = Laboratoire.objects.all()
     serializer_class = LaboratoireSerializer
+    
+class DemandeViewSet(viewsets.ModelViewSet):
+    queryset = Demande.objects.all()
+    serializer_class = DemandeSerializer
+
+
+@csrf_exempt
+def Demande_api(request, id=0):
+    if request.method == 'GET':
+        Demandes = Demande.objects.all()
+        Demandes_serializer = DemandeSerializer(Demandes, many=True)
+        return JsonResponse(Demandes_serializer.data, safe=False)
+    elif request.method == 'POST':
+        Demande_data = JSONParser().parse(request)
+        Demande_serializer = DemandeSerializer(data=Demande_data)
+        if Demande_serializer.is_valid():
+            Demande_serializer.save()
+            return JsonResponse(Demande_serializer.data, status=201)
+        return JsonResponse(Demande_serializer.errors, status=400)
+    elif request.method == 'PUT':
+        Demande_data = JSONParser().parse(request)
+        Demande_obj = Demande.objects.get(id=id)
+        Demande_serializer = DemandeSerializer(Demande_obj, data=Demande_data)
+        if DemandeSerializer.is_valid():
+            DemandeSerializer.save()
+            return JsonResponse("Update successful", safe=False)
+        return JsonResponse("Update failed", safe=False)
+    elif request.method == 'DELETE':
+        Demande_obj = Demande.objects.get(id=id)
+        Demande_obj.delete()
+        return JsonResponse("Deleted successful", safe=False)
 
 @csrf_exempt
 def Laboratoire_api(request, id=0):
@@ -405,4 +439,86 @@ class Admin_Modify_Equipement(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-      
+class Demande_API(APIView):
+    
+    def post(self, request, format=None):
+        # Extracting pk_equipement and pk_analyste from the request data
+        pk_equipement = request.data.get('equipement')
+        pk_analyste = request.data.get('analyste')
+
+        try:
+            equipement = Equipement.objects.get(pk=pk_equipement)
+            analyste = Employe.objects.get(pk=pk_analyste)
+        except Equipement.DoesNotExist:
+            return Response({'error': 'Equipement not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Employe.DoesNotExist:
+            return Response({'error': 'Analyste not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Ensure the request data is appropriate for the serializer
+        request.data['equipement'] = equipement.id
+        request.data['analyste'] = analyste.id
+
+        serializer = DemandeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)  # Log the errors to the console
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, pk):
+        try:
+            demande = Demande.objects.get(pk=pk)
+            technicien_id = request.data.get('technicien')
+            technicien = Employe.objects.get(pk=technicien_id)
+        except Demande.DoesNotExist:
+            return Response({'error': 'Demande not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Employe.DoesNotExist:
+            return Response({'error': 'Technicien not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the request data before passing to serializer
+        update_data = request.data.copy()
+        update_data['etat'] = 'en_cours'  # Automatically set the state to "en_cours"
+        update_data['technicien'] = technicien.id
+
+        serializer = DemandeSerializer(demande, data=update_data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class DemandeByEquipementView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes for
+        an equipement as determined by the equipement_id portion of the URL.
+        """
+        equipement_id = self.kwargs['equipement_id']
+        return Demande.objects.filter(equipement__id=equipement_id)
+    
+class DemandeByAnalysteView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes created by
+        an analyste as determined by the analyste_id portion of the URL.
+        """
+        analyste_id = self.kwargs['analyste_id']
+        return Demande.objects.filter(analyste__id=analyste_id)
+    
+    
+class DemandeByTechnicienView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes treated by
+        a technicien as determined by the technicien_id portion of the URL.
+        """
+        technicien_id = self.kwargs['technicien_id']
+        return Demande.objects.filter(technicien__id=technicien_id)
