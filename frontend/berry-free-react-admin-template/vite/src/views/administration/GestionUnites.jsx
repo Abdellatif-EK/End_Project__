@@ -40,14 +40,15 @@ const GestionUnites = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalUniteId, setModalUniteId] = useState(null);
   const [modalMode, setModalMode] = useState('add');
+  const [employes,setEmployes] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     laboratoire: '',
-    responsable: ''
+    responsable: null // Change to null to handle user objects
   });
   const [laboratoires, setLaboratoires] = useState([]);
-  const [employes, setEmployes] = useState([]);
+  const [users, setUsers] = useState([]); // Added state for users
 
   useEffect(() => {
     const fetchUnites = async () => {
@@ -62,7 +63,10 @@ const GestionUnites = () => {
     const fetchLaboratoires = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/Laboratoire');
-        setLaboratoires(response.data);
+        setLaboratoires(response.data.map(lab => ({
+          id: lab.id,
+          label: lab.name // Assuming 'name' is the field to display
+        })));
       } catch (error) {
         console.error('Error fetching laboratoires:', error);
       }
@@ -71,7 +75,10 @@ const GestionUnites = () => {
     const fetchEmployes = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/Employe');
-        setEmployes(response.data);
+        setEmployes(response.data.map(emp => ({
+          id: emp.id,
+          label: `${emp.username} (${emp.email})` // Construct a label combining username and email
+        })));
       } catch (error) {
         console.error('Error fetching employes:', error);
       }
@@ -93,8 +100,8 @@ const GestionUnites = () => {
     setFormData({
       name: Unite ? Unite.name : '',
       description: Unite ? Unite.description : '',
-      laboratoire: Unite ? Unite.laboratoire : '', 
-      responsable: Unite ? Unite.responsable : ''
+      laboratoire: Unite ? Unite.laboratoire : null, // Change to null to handle laboratoire objects
+      responsable: Unite ? Unite.responsable : null // Change to null to handle user objects
     });
     setModalMode(Unite ? 'edit' : 'add');
     setShowModal(true);
@@ -106,8 +113,8 @@ const GestionUnites = () => {
     setFormData({
       name: '',
       description: '',
-      laboratoire: '',
-      responsable: ''
+      laboratoire: null, // Change to null to handle laboratoire objects
+      responsable: null // Change to null to handle user objects
     });
   };
 
@@ -329,22 +336,25 @@ const GestionUnites = () => {
                 margin="normal"
                 required
               />
-              <TextField
-                label="Laboratoire"
-                name="laboratoire"
+              <Autocomplete
+                options={laboratoires}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => <TextField {...params} label="Laboratoire" />}
                 value={formData.laboratoire}
-                onChange={handleInputChange}
+                onChange={(event, newValue) => {
+                  setFormData({ ...formData, laboratoire: newValue ? newValue.id : null });
+                }}
                 fullWidth
                 margin="normal"
                 required
               />
               <Autocomplete
                 options={employes}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => option.label}
                 renderInput={(params) => <TextField {...params} label="Responsable" />}
                 value={formData.responsable}
                 onChange={(event, newValue) => {
-                  setFormData({ ...formData, responsable: newValue ? newValue.id : '' });
+                  setFormData({ ...formData, responsable: newValue ? newValue.id : null });
                 }}
                 fullWidth
                 margin="normal"
