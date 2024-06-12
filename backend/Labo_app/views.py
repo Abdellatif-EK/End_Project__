@@ -30,6 +30,49 @@ from rest_framework.parsers import JSONParser
 from .models import Equipement,Demande
 from .serializers import EquipementSerializer
 from rest_framework.generics import ListAPIView
+import smtplib
+import random
+import array
+
+def generate_password():
+    MAX_LEN = 8
+    DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    LOCASE_CHARACTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    UPCASE_CHARACTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    SYMBOLS = ['@', '#', '$', '%', '=', ':', '?', '.', '/', '|', '~', '>', '*', '(', ')', '<']
+    COMBINED_LIST = DIGITS + UPCASE_CHARACTERS + LOCASE_CHARACTERS + SYMBOLS
+
+    rand_digit = random.choice(DIGITS)
+    rand_upper = random.choice(UPCASE_CHARACTERS)
+    rand_lower = random.choice(LOCASE_CHARACTERS)
+    rand_symbol = random.choice(SYMBOLS)
+
+    temp_pass = rand_digit + rand_upper + rand_lower + rand_symbol
+
+    for x in range(MAX_LEN - 4):
+        temp_pass = temp_pass + random.choice(COMBINED_LIST)
+
+    temp_pass_list = array.array('u', temp_pass)
+    random.shuffle(temp_pass_list)
+
+    password = ""
+    for x in temp_pass_list:
+        password = password + x
+
+    return password
+
+def send_email(email_receiver, password):
+    email_sender = "elkerbaniabdellatif@gmail.com"
+    email_password = "bewm brgk snog fndo"
+    subject = "Votre Mot de passe"
+    message = f"Votre mot de passe est: {password}"
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(email_sender, email_password)
+    server.sendmail(email_sender, email_receiver, f"Subject: {subject}\n\n{message}")
+    server.quit()
+    
 
 def csrf_token_view(request):
     return JsonResponse({'csrfToken': get_token(request)})
@@ -230,24 +273,38 @@ def employe_matrices(request, employe_id):
 
 @csrf_exempt
 def MatriceList(request):
-     if request.method == 'GET':
+    if request.method == 'GET':
         matrices = Matrice.objects.all()
         matrices_serializer = MatriceSerializer(matrices, many=True)
         return JsonResponse(matrices_serializer.data, safe=False)
-     
+
+
+# class UserRegister(APIView):
+# 	permission_classes = (permissions.AllowAny,)
+# 	def post(self, request):
+# 		clean_data = custom_validation(request.data)
+# 		serializer = UserRegisterSerializer(data=clean_data)
+# 		if serializer.is_valid(raise_exception=True):
+# 			user = serializer.create(clean_data)
+# 			if user:
+# 				return Response(serializer.data, status=status.HTTP_201_CREATED)
+# 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserRegister(APIView):
-	permission_classes = (permissions.AllowAny,)
-	def post(self, request):
-		clean_data = custom_validation(request.data)
-		serializer = UserRegisterSerializer(data=clean_data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.create(clean_data)
-			if user:
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = (permissions.AllowAny,)
 
+    def post(self, request):
+        #clean_data = custom_validation(request.data)
+        password = generate_password()
+        request.data['password'] = password
+        serializer = UserRegisterSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.create(request.data)
+            if user:
+                send_email(request.data['email'], password)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 # class UserLogin(APIView):
 # 	permission_classes = (permissions.AllowAny,)
@@ -567,3 +624,12 @@ class DemandeByTechnicienView(ListAPIView):
         """
         technicien_id = self.kwargs['technicien_id']
         return Demande.objects.filter(technicien__id=technicien_id)
+    
+class DemandesPasTraiteeView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes that do not have the attribute 'etat' set to 'traite'.
+        """
+        return Demande.objects.exclude(etat='traite')

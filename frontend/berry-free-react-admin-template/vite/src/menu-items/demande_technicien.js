@@ -12,7 +12,7 @@ const icons = {
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
 
 const intervention = {
-  id: 'intervention',
+  id: 'demandes',
   title: 'Interventions',
   type: 'group',
   children: [
@@ -20,7 +20,7 @@ const intervention = {
       id: 'demandes_technicien',
       title: 'Liste des Demandes',
       type: 'item',
-      url: '/intervention/demandes-technicien',
+      url: '/demandes/demandes-technicien',
       icon: icons.IconTypography,
       breadcrumbs: false
     },
@@ -28,7 +28,7 @@ const intervention = {
       id: 'demandes_analyste_traitees',
       title: 'Liste des Demandes Traitées',
       type: 'item',
-      url: '/intervention/demandes-analyste-traitees',
+      url: '/demandes/demandes-technicien-traitees',
       icon: icons.IconTypography,
       breadcrumbs: false
     }

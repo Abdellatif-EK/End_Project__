@@ -150,7 +150,7 @@ class Demande(models.Model):
     date_fin = models.DateField(null=True)
     etat = models.CharField(max_length=30, choices=Etat_CHOICES, default=Etat_CHOICES[0][0])
     description = models.CharField(max_length=500, null=False)
-    
+    action = models.CharField(max_length=500,null=True)
     equipement = models.ForeignKey('Equipement', on_delete=models.CASCADE)
     analyste = models.ForeignKey('Employe', on_delete=models.CASCADE,related_name='analyste')
     technicien = models.ForeignKey('Employe', on_delete=models.CASCADE, null=True, blank=True,related_name='technicien')

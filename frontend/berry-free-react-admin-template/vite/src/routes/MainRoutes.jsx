@@ -22,6 +22,10 @@ const Logout = Loadable(lazy(() => import('views/profile/Logout')));
 const DefinirDemande = Loadable(lazy(() => import('views/intervention/DefinirDemande')));
 const DemandesAnalyste = Loadable(lazy(() => import('views/intervention/DemandesAnalyste')));
 const DemandesTraitees = Loadable(lazy(() => import('views/intervention/DemandesTraitees')));
+const DemandesTechnicien = Loadable(lazy(() => import('views/demandes/DemandesTechnicien')));
+const DemandesTraitees_Tech = Loadable(lazy(() => import('views/demandes/DemandesTraitees_Tech')));
+const GestionCategories = Loadable(lazy(() => import('views/administration/GestionCategories')));
+const GestionUnite = Loadable(lazy(() => import('views/administration/GestionUnites')));
 
 const MainRoutes = {
   path: '/',
@@ -43,6 +47,8 @@ const MainRoutes = {
     { path: 'administration', children: [{ path: 'gestion-utilisateurs', element: <GestionUtilisateurs /> }] },
     { path: 'administration', children: [{ path: 'appareil-detail/:id', element: <AppareilDetail /> }] },
     { path: 'administration', children: [{ path: 'gestion-matrices', element: <GestionMatrices /> }] },
+    { path: 'administration', children: [{ path: 'gestion-categories', element: <GestionCategories /> }] },
+    { path: 'administration', children: [{ path: 'gestion-unite', element: <GestionUnite /> }] },
     {
       path: 'components',
       children: [
@@ -64,10 +70,16 @@ const MainRoutes = {
       children: [
         { path: '/intervention/definir-demande', element: <DefinirDemande /> },
         { path: '/intervention/demandes-analyste', element: <DemandesAnalyste /> },
-        { path: '/intervention/demandes-analyste-traitees', element: <DemandesTraitees /> },
+        { path: '/intervention/demandes-analyste-traitees', element: <DemandesTraitees /> }
       ]
     },
-    
+    {
+      path: 'demandes',
+      children: [
+        { path: '/demandes/demandes-technicien', element: <DemandesTechnicien /> },
+        { path: '/demandes/demandes-technicien-traitees', element: <DemandesTraitees_Tech /> }
+      ]
+    }
   ]
 };
 

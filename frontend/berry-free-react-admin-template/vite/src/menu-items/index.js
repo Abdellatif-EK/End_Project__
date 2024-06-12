@@ -28,8 +28,8 @@ if (userRole === 'administrateur') {
   menuItems.items = [acceuil,pages,other];
 }else if (userRole === 'analyst'){
   menuItems.items = [acceuil, intervention,other];
-}else if(userRole === 'technicien'){
-  menuItems.items = [acceuil, demande_technicien,other];
+}else if (userRole === 'Technicien') {
+  menuItems.items = [acceuil, demande_technicien, other];
 }
 
 export default menuItems;

@@ -45,35 +45,51 @@ const pages = {
       children: [
         {
           id: 'gestion_equipements',
-          title: 'gestion des équipements',
+          title: 'Equipements',
           type: 'item',
           url: '/administration/gestion-equipements',
           icon: icons.IconTypography,
           breadcrumbs: false
         },
         {
+          id: 'gestion_categories',
+          title: 'Catégories',
+          type: 'item',
+          url: '/administration/gestion-categories',
+          icon: icons.IconTypography,
+          breadcrumbs: false
+        },
+        {
           id: 'gestion_laboratoires',
-          title: 'gestion des laboratoires',
+          title: 'Laboratoires',
           type: 'item',
           url: '/administration/gestion-laboratoires',
           icon: icons.IconPalette,
           breadcrumbs: false
         },
         {
-            id: 'gestion_utilisateurs',
-            title: 'gestion des utilisateurs',
-            type: 'item',
-            url: '/administration/gestion-utilisateurs',
-            icon: icons.IconPalette,
-            breadcrumbs: false
+          id: 'gestion_utilisateurs',
+          title: 'Utilisateurs',
+          type: 'item',
+          url: '/administration/gestion-utilisateurs',
+          icon: icons.IconPalette,
+          breadcrumbs: false
         },
         {
-            id: 'gestion_matrices',
-            title: 'gestion des matrices',
-            type: 'item',
-            url: '/administration/gestion-matrices',
-            icon: icons.IconPalette,
-            breadcrumbs: false
+          id: 'gestion_matrices',
+          title: "Matrices d'accés",
+          type: 'item',
+          url: '/administration/gestion-matrices',
+          icon: icons.IconPalette,
+          breadcrumbs: false
+        },
+        {
+          id: 'gestion_unite',
+          title: "Unités",
+          type: 'item',
+          url: '/administration/gestion-unite',
+          icon: icons.IconPalette,
+          breadcrumbs: false
         }
       ]
     }

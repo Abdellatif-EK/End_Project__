@@ -4,11 +4,12 @@ import {
   Box, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TablePagination, TableRow, TableSortLabel, Toolbar,
   Typography, Checkbox, IconButton, Tooltip, Button, Modal,
-  TextField, FormControlLabel, Switch
+  TextField, FormControlLabel, Switch,Grid
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import EditIcon from '@mui/icons-material/Edit';
 import MainCard from 'ui-component/cards/MainCard';
 
 const GestionLaboratoires = () => {
@@ -20,8 +21,8 @@ const GestionLaboratoires = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [dense, setDense] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteLaboratoireId, setDeleteLaboratoireId] = useState(null);
+  const [modalLaboratoireId, setModalLaboratoireId] = useState(null);
+  const [modalMode, setModalMode] = useState('add'); 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -48,12 +49,19 @@ const GestionLaboratoires = () => {
     laboratoire.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddLaboratoire = () => {
+  const handleOpenModal = (laboratoire = null) => {
+    setModalLaboratoireId(laboratoire ? laboratoire.id : null);
+    setFormData({
+      name: laboratoire ? laboratoire.name : '',
+      description: laboratoire ? laboratoire.description : '',
+    });
+    setModalMode(laboratoire ? 'edit' : 'add');
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setModalLaboratoireId(null);
     setFormData({
       name: '',
       description: '',
@@ -73,7 +81,7 @@ const GestionLaboratoires = () => {
       return false;
     }
     if (!formData.description) {
-      alert('description is required.');
+      alert('Description is required.');
       return false;
     }
     return true;
@@ -84,33 +92,27 @@ const GestionLaboratoires = () => {
     if (!validateForm()) {
       return;
     }
+    const url = `http://127.0.0.1:8000/Laboratoire/${modalLaboratoireId ? modalLaboratoireId + '/' : ''}`;
+    const method = modalLaboratoireId ? 'put' : 'post';
     try {
-      const response = await axios.post('http://127.0.0.1:8000/Laboratoire', formData);
-      setLaboratoires([...laboratoires, response.data]);
+      const response = await axios[method](url, formData);
+      const updatedLaboratoires = modalLaboratoireId
+        ? laboratoires.map((lab) => (lab.id === modalLaboratoireId ? response.data : lab))
+        : [...laboratoires, response.data];
+      setLaboratoires(updatedLaboratoires);
       handleCloseModal();
     } catch (error) {
-      console.error('Error adding laboratoire:', error);
+      console.error(`Error ${modalMode === 'add' ? 'adding' : 'updating'} laboratoire:`, error);
     }
   };
 
-  const handleDeleteLaboratoire = (id) => {
-    setDeleteLaboratoireId(id);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDeleteLaboratoire = async () => {
+  const handleDeleteLaboratoire = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/Laboratoire/${deleteLaboratoireId}`);
-      setLaboratoires(laboratoires.filter((laboratoire) => laboratoire.id !== deleteLaboratoireId));
-      setShowDeleteModal(false);
+      await axios.delete(`http://127.0.0.1:8000/Laboratoire/${id}/`);
+      setLaboratoires(laboratoires.filter((laboratoire) => laboratoire.id !== id));
     } catch (error) {
       console.error('Error deleting laboratoire:', error);
     }
-  };
-
-  const handleCloseDeleteModal = () => {
-    setShowDeleteModal(false);
-    setDeleteLaboratoireId(null);
   };
 
   const handleRequestSort = (event, property) => {
@@ -118,8 +120,6 @@ const GestionLaboratoires = () => {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -134,7 +134,6 @@ const GestionLaboratoires = () => {
     setDense(event.target.checked);
   };
 
-
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, filteredLaboratoires.length - page * rowsPerPage);
 
   const visibleRows = stableSort(filteredLaboratoires, getComparator(order, orderBy)).slice(
@@ -143,7 +142,6 @@ const GestionLaboratoires = () => {
   );
 
   return (
-    
     <MainCard>
     <Box sx={{ width: '100%' }}>
         <Typography variant="h1" gutterBottom>
@@ -161,7 +159,7 @@ const GestionLaboratoires = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={handleAddLaboratoire}
+              onClick={() => handleOpenModal()}
               sx={{ height: '56px' }} // Match the height of the TextField
             >
               Ajouter Laboratoire
@@ -226,7 +224,7 @@ const GestionLaboratoires = () => {
                       ) : null}
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -236,7 +234,6 @@ const GestionLaboratoires = () => {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, laboratoire.id)}
                       role="checkbox"
                       tabIndex={-1}
                       key={laboratoire.id}
@@ -245,10 +242,19 @@ const GestionLaboratoires = () => {
                         {laboratoire.name}
                       </TableCell>
                       <TableCell align="center">{laboratoire.description}</TableCell>
-                      <TableCell align="center">
-                        <Button variant="outlined" color="secondary" onClick={() => handleDeleteLaboratoire(laboratoire.id)}>
-                          Delete
-                        </Button>
+                      <TableCell align="right">
+                        <Grid container spacing={1} direction="row">
+                          <Grid item xs={4}>
+                            <IconButton aria-label="modifier" onClick={() => handleOpenModal(laboratoire)}>
+                              <EditIcon color="primary" />
+                            </IconButton>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <IconButton aria-label="delete" onClick={() => handleDeleteLaboratoire(laboratoire.id)}>
+                              <DeleteIcon color="primary" />
+                            </IconButton>
+                          </Grid>
+                        </Grid>
                       </TableCell>
                     </TableRow>
                   );
@@ -281,7 +287,7 @@ const GestionLaboratoires = () => {
       <Modal open={showModal} onClose={handleCloseModal}>
         <Box sx={{ p: 4, maxWidth: 400, margin: 'auto', marginTop: '10%', backgroundColor: 'white', borderRadius: 2 }}>
           <Typography variant="h6" component="h2">
-            Add Laboratoire
+            {modalMode === 'add' ? 'Add' : 'Edit'} Laboratoire
           </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -311,25 +317,6 @@ const GestionLaboratoires = () => {
               </Button>
             </Box>
           </form>
-        </Box>
-      </Modal>
-
-      <Modal open={showDeleteModal} onClose={handleCloseDeleteModal}>
-        <Box sx={{ p: 4, maxWidth: 400, margin: 'auto', marginTop: '10%', backgroundColor: 'white', borderRadius: 2 }}>
-          <Typography variant="h6" component="h2">
-            Confirm Delete
-          </Typography>
-          <Typography sx={{ mt: 2 }}>
-            Are you sure you want to delete this laboratoire?
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button onClick={handleCloseDeleteModal} sx={{ mr: 1 }}>
-              Cancel
-            </Button>
-            <Button onClick={confirmDeleteLaboratoire} variant="contained" color="secondary">
-              Delete
-            </Button>
-          </Box>
         </Box>
       </Modal>
     </Box>

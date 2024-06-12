@@ -5,7 +5,7 @@ from .views import Demande_Analyste, EquipementViewSet,UniteViewSet,LaboratoireV
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import Admin_Add_Equipement , csrf_token_view , Admin_Modify_Equipement,Demande_API,Demande_api
-from .views import DemandeByEquipementView, DemandeByAnalysteView,DemandeByTechnicienView
+from .views import DemandeByEquipementView, DemandeByAnalysteView,DemandeByTechnicienView,DemandesPasTraiteeView
 
 router = DefaultRouter()
 router.register(r'Equipement', EquipementViewSet)
@@ -44,6 +44,9 @@ urlpatterns = [
     path('ajouter/equipement', Admin_Add_Equipement.as_view(), name='admin-ajouter-equipement'), 
     path('modifier/equipement/<int:pk>',Admin_Modify_Equipement.as_view(),name='admin-modifier-equipement'),
     path('matrice_delete/<int:employe_id>',views.matrice_delete,name='matrice-delete'),
+    
+    
+    path('demande/pas/traitee', DemandesPasTraiteeView.as_view(), name='demande-pas-traitee'),
     
     path('demande/definir', Demande_API.as_view(), name='definir-demande'),
     path('demande/update/<int:pk>/', Demande_API.as_view(), name='update-demande'),
