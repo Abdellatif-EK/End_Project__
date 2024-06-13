@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http.response import JsonResponse, HttpResponse
 from rest_framework.parsers import JSONParser
 from Labo_app.serializers import EmployeSerializer, EquipementSerializer, LaboratoireSerializer,UniteSerializer
-from Labo_app.models import Employe, Equipement, Laboratoire,Unite
+from Labo_app.models import Employe, Equipement, Laboratoire,Unite,Categorie
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -17,7 +17,7 @@ from rest_framework.authtoken.models import Token  # Import Token model
 from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import Matrice
-from .serializers import MatriceSerializer
+from .serializers import MatriceSerializer,CategorieSerializer
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser , FormParser
 from django.utils.decorators import method_decorator
@@ -97,6 +97,9 @@ class DemandeViewSet(viewsets.ModelViewSet):
     queryset = Demande.objects.all()
     serializer_class = DemandeSerializer
 
+class CategorieViewSet(viewsets.ModelViewSet):
+    queryset = Categorie.objects.all()
+    serializer_class = CategorieSerializer
 
 @csrf_exempt
 def Demande_api(request, id=0):
@@ -150,6 +153,31 @@ def Laboratoire_api(request, id=0):
         laboratoire_obj.delete()
         return JsonResponse("Deleted successful", safe=False)
 
+@csrf_exempt
+def Categorie_api(request, id=0):
+    if request.method == 'GET':
+        Categories = Categorie.objects.all()
+        Categories_serializer = CategorieSerializer(Categories, many=True)
+        return JsonResponse(Categories_serializer.data, safe=False)
+    elif request.method == 'POST':
+        Categorie_data = JSONParser().parse(request)
+        Categories_serializer = CategorieSerializer(data=Categorie_data)
+        if Categories_serializer.is_valid():
+            Categories_serializer.save()
+            return JsonResponse(Categories_serializer.data, status=201)
+        return JsonResponse(Categories_serializer.errors, status=400)
+    elif request.method == 'PUT':
+        Categorie_data = JSONParser().parse(request)
+        Categorie_obj = Categorie.objects.get(id=id)
+        Categories_serializer = CategorieSerializer(Categorie_obj, data=Categorie_data)
+        if Categories_serializer.is_valid():
+            Categories_serializer.save()
+            return JsonResponse("Update successful", safe=False)
+        return JsonResponse("Update failed", safe=False)
+    elif request.method == 'DELETE':
+        Categorie_obj = Categorie.objects.get(id=id)
+        Categorie_obj.delete()
+        return JsonResponse("Deleted successful", safe=False)
 
 @csrf_exempt
 def Unite_api(request, id=0):

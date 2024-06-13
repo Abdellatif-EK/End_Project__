@@ -4,8 +4,8 @@ import axios from 'axios';
 import { TextField, IconButton, Box, Modal, TableBody, Table, Typography, Button, TableContainer, TableHead, Toolbar, TableRow, TableCell, Checkbox, TablePagination, Alert } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-import DeleteIcon from '@mui/icons-material/Delete';
-
+import DeleteIcon from '@mui/icons-material/Close';
+// import CloseIcon from '@mui/icons-material/Close';
 const Matrice = () => {
   const navigate = useNavigate();
   const { id } = useParams();

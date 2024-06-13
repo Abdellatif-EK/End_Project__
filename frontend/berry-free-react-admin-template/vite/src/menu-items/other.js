@@ -11,11 +11,19 @@ const other = {
   id: 'sample-docs-roadmap',
   type: 'group',
   children: [
+    // {
+    //   id: 'sample-page',
+    //   title: 'Profile',
+    //   type: 'item',
+    //   url: '/sample-page',
+    //   icon: icons.AccountCircleIcon,
+    //   breadcrumbs: false
+    // },
     {
-      id: 'sample-page',
+      id: 'profile',
       title: 'Profile',
       type: 'item',
-      url: '/sample-page',
+      url: '/profile/profile',
       icon: icons.AccountCircleIcon,
       breadcrumbs: false
     },

@@ -18,7 +18,6 @@ const GestionMatrices = Loadable(lazy(() => import('views/administration/Gestion
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const AppareilDetail = Loadable(lazy(() => import('views/administration/AppareilDetail')));
 const Matrice = Loadable(lazy(() => import('views/components/Matrice')));
-const Logout = Loadable(lazy(() => import('views/profile/Logout')));
 const DefinirDemande = Loadable(lazy(() => import('views/intervention/DefinirDemande')));
 const DemandesAnalyste = Loadable(lazy(() => import('views/intervention/DemandesAnalyste')));
 const DemandesTraitees = Loadable(lazy(() => import('views/intervention/DemandesTraitees')));
@@ -26,7 +25,8 @@ const DemandesTechnicien = Loadable(lazy(() => import('views/demandes/DemandesTe
 const DemandesTraitees_Tech = Loadable(lazy(() => import('views/demandes/DemandesTraitees_Tech')));
 const GestionCategories = Loadable(lazy(() => import('views/administration/GestionCategories')));
 const GestionUnite = Loadable(lazy(() => import('views/administration/GestionUnites')));
-
+const Logout = Loadable(lazy(() => import('views/profile/Logout')));
+const Profile = Loadable(lazy(()=>import('views/profile/Profile')))
 const MainRoutes = {
   path: '/',
   element: (
@@ -63,7 +63,7 @@ const MainRoutes = {
         { path: 'physyco-chimique', element: <LaboratoirePhysycoChimique /> }
       ]
     },
-    { path: 'sample-page', element: <SamplePage /> },
+    { path: '/profile/profile', element: <Profile /> },
     { path: '/profile/logout', element: <Logout /> },
     {
       path: 'intervention',

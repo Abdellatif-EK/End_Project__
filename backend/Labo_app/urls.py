@@ -1,7 +1,7 @@
 from django.urls import path, re_path, include
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import Demande_Analyste, EquipementViewSet,UniteViewSet,LaboratoireViewSet,EmployeViewSet,DemandeViewSet
+from .views import Demande_Analyste, EquipementViewSet,UniteViewSet,LaboratoireViewSet,EmployeViewSet,DemandeViewSet,CategorieViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import Admin_Add_Equipement , csrf_token_view , Admin_Modify_Equipement,Demande_API,Demande_api
@@ -13,6 +13,7 @@ router.register(r'Unite',UniteViewSet)
 router.register(r'Laboratoire',LaboratoireViewSet)
 router.register(r'Employe',EmployeViewSet)  
 router.register(r'Demande',DemandeViewSet)
+router.register(r'Categorie',CategorieViewSet)
 name_app = 'Labo_app'
 
 urlpatterns = [
@@ -31,6 +32,8 @@ urlpatterns = [
     re_path(r'^Laboratoire/([0-9]+)$', views.Laboratoire_api),
     re_path(r'^Unite$', views.Unite_api),
     re_path(r'^Unite/([0-9]+)$', views.Unite_api),
+    re_path(r'^Demande$', views.Demande_api),
+    re_path(r'^Demande/([0-9]+)$', views.Demande_api),
     re_path(r'^Demande$', views.Demande_api),
     re_path(r'^Demande/([0-9]+)$', views.Demande_api),
     

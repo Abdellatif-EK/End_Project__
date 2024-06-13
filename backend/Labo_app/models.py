@@ -96,6 +96,13 @@ class Laboratoire(models.Model):
     def __str__(self):
         return self.name
 
+class Categorie(models.Model):
+    name = models.CharField(max_length=100, null=False)
+    description = models.CharField(max_length=500, null=False)
+
+    def __str__(self):
+        return self.name
+
 
 class Unite(models.Model):
     name = models.CharField(max_length=100, null=False)
