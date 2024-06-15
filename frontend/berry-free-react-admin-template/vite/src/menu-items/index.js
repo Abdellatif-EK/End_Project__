@@ -10,7 +10,7 @@ import demande_technicien from './demande_technicien';
 // Function to get user role from local storage
 
 const getUserRole = () => {
-  setTimeout(() => {  console.log('easy boys'); }, 5000);
+  // setTimeout(() => {  console.log('easy boys'); }, 5000);
   const user = JSON.parse(localStorage.getItem('user'));
   // console.log(localStorage.getItem('user'));
   return user?.role || 'guest';
@@ -29,7 +29,8 @@ if (userRole === 'administrateur') {
 }else if (userRole === 'analyst'){
   menuItems.items = [acceuil, intervention,other];
 }else if (userRole === 'Technicien') {
-  menuItems.items = [acceuil, demande_technicien, other];
+  menuItems.items = [acceuil, demande_technicien, intervention, other];
 }
 
 export default menuItems;
+

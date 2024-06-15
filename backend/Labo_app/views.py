@@ -661,3 +661,49 @@ class DemandesPasTraiteeView(ListAPIView):
         This view returns a list of all the demandes that do not have the attribute 'etat' set to 'traite'.
         """
         return Demande.objects.exclude(etat='traite')
+    
+    
+class DemandesTraiteesView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes that have the attribute 'etat' set to 'traite'.
+        """
+        return Demande.objects.filter(etat='traite')
+
+class DemandesNonFaisableView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes that have the attribute 'etat' set to 'non_faisable'.
+        """
+        return Demande.objects.filter(etat='non_faisable')
+
+class DemandesEnCoursView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes that have the attribute 'etat' set to 'en_cours'.
+        """
+        return Demande.objects.filter(etat='en_cours')
+
+class DemandesEnAttenteView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes that have the attribute 'etat' set to 'reouverture' or 'nouvelle'.
+        """
+        return Demande.objects.filter(etat__in=['reouverture', 'nouvelle'])
+    
+class DemandeVerifieView(ListAPIView):
+    serializer_class = DemandeSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all the demandes that have the attribute 'etat' set to 'verifie'.
+        """
+        return Demande.objects.filter(etat='verifie')

@@ -5,7 +5,7 @@ from .views import Demande_Analyste, EquipementViewSet,UniteViewSet,LaboratoireV
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import Admin_Add_Equipement , csrf_token_view , Admin_Modify_Equipement,Demande_API,Demande_api
-from .views import DemandeByEquipementView, DemandeByAnalysteView,DemandeByTechnicienView,DemandesPasTraiteeView
+from .views import DemandeByEquipementView, DemandeByAnalysteView,DemandeByTechnicienView,DemandesPasTraiteeView,DemandesTraiteesView,DemandesNonFaisableView,DemandesEnCoursView,DemandesEnAttenteView,DemandeVerifieView
 
 router = DefaultRouter()
 router.register(r'Equipement', EquipementViewSet)
@@ -50,6 +50,19 @@ urlpatterns = [
     
     
     path('demande/pas/traitee', DemandesPasTraiteeView.as_view(), name='demande-pas-traitee'),
+    path('demande/traitee', DemandesTraiteesView.as_view(), name='demande-traitee'),
+    path('demande/non-faisable', DemandesNonFaisableView.as_view(), name='demande-non-faisable'),
+    path('demande/en-cours', DemandesEnCoursView.as_view(), name='demande-en-cours'),
+    path('demande/en-attente', DemandesEnAttenteView.as_view(), name='demande-en-attente'),
+    path('demande/verifie', DemandeVerifieView.as_view(), name='verifier-demande'),
+    
+    path('demande/turn-to-en-cours/<int:pk>/', Demande_API.as_view(), name='turn-to-en-cours'),
+    path('demande/turn-to-nouvelle/<int:pk>/', Demande_API.as_view(), name='turn-to-en-attente'),
+    path('demande/turn-to-reouverture/<int:pk>/', Demande_API.as_view(), name='turn-to-reouverture'),
+    path('demande/turn-to-traite/<int:pk>/', Demande_API.as_view(), name='turn-to-traite'),
+    path('demande/turn-to-non-faisable/<int:pk>/',  Demande_API.as_view(), name='turn-to-non-faisable'),
+    path('demande/turn-to-verifie/<int:pk>/', Demande_API.as_view(), name='turn-to-verifie'),
+    
     
     path('demande/definir', Demande_API.as_view(), name='definir-demande'),
     path('demande/update/<int:pk>/', Demande_API.as_view(), name='update-demande'),

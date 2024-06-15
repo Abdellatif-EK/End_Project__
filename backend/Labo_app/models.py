@@ -151,6 +151,7 @@ class Demande(models.Model):
         ('verifie','verifie'),
         ('reouverture','reouverture'),
         ('traite','traite'),
+        ('non_faisable','non_faisable'),
     ]
     date_demande = models.DateField(auto_now=True)
     date_debut = models.DateField(null=True)

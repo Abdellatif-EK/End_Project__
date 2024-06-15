@@ -1,12 +1,13 @@
 // assets
 import { IconTypography, IconPalette, IconShadow, IconWindmill } from '@tabler/icons-react';
-
+import EngineeringIcon from '@mui/icons-material/Engineering';
 // constant
 const icons = {
   IconTypography,
   IconPalette,
   IconShadow,
-  IconWindmill
+  IconWindmill,
+  EngineeringIcon
 };
 
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
@@ -21,7 +22,7 @@ const intervention = {
       title: 'Liste des Demandes',
       type: 'item',
       url: '/demandes/demandes-technicien',
-      icon: icons.IconTypography,
+      icon: icons.EngineeringIcon,
       breadcrumbs: false
     },
     {
@@ -29,7 +30,7 @@ const intervention = {
       title: 'Liste des Demandes Traitées',
       type: 'item',
       url: '/demandes/demandes-technicien-traitees',
-      icon: icons.IconTypography,
+      icon: icons.EngineeringIcon,
       breadcrumbs: false
     }
   ]

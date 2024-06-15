@@ -18,7 +18,7 @@ const administration = {
   children: [
     {
       id: 'gestion_equipements',
-      title: 'gestion des équipements',
+      title: 'Equipements',
       type: 'item',
       url: '/administration/gestion-equipements',
       icon: icons.IconTypography,
@@ -26,7 +26,7 @@ const administration = {
     },
     {
       id: 'gestion_laboratoires',
-      title: 'gestion des laboratoires',
+      title: 'Laboratoires',
       type: 'item',
       url: '/administration/gestion-laboratoires',
       icon: icons.IconPalette,
@@ -34,7 +34,7 @@ const administration = {
     },
     {
         id: 'gestion_utilisateurs',
-        title: 'gestion des utilisateurs',
+        title: 'Utilisateurs',
         type: 'item',
         url: '/administration/gestion-utilisateurs',
         icon: icons.IconPalette,
@@ -42,7 +42,7 @@ const administration = {
     },
     {
         id: 'gestion_matrices',
-        title: 'gestion des matrices',
+        title: 'Matrices d\'accés',
         type: 'item',
         url: '/administration/gestion-matrices',
         icon: icons.IconPalette,
