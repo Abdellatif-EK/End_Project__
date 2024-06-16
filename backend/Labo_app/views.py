@@ -697,7 +697,7 @@ class DemandesEnAttenteView(ListAPIView):
         """
         This view returns a list of all the demandes that have the attribute 'etat' set to 'reouverture' or 'nouvelle'.
         """
-        return Demande.objects.filter(etat__in=['reouverture', 'nouvelle'])
+        return Demande.objects.filter(etat__in=['invalide', 'nouvelle'])
     
 class DemandeVerifieView(ListAPIView):
     serializer_class = DemandeSerializer
@@ -707,3 +707,54 @@ class DemandeVerifieView(ListAPIView):
         This view returns a list of all the demandes that have the attribute 'etat' set to 'verifie'.
         """
         return Demande.objects.filter(etat='verifie')
+    
+from django.views import View
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+
+class DemandePDFView(View):
+    def get(self, request, demande_id):
+        try:
+            demande = Demande.objects.get(id=demande_id)
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="Demande_d_intervention_{demande_id}.pdf"'
+
+            doc = SimpleDocTemplate(response, pagesize=letter)
+            elements = []
+
+            data = [
+                ["Demande ID", demande.id],
+                ["Date de la demande", demande.date_demande.strftime("%Y-%m-%d")],
+                ["État", demande.etat],
+                ["Description", demande.description],
+                ["Date de debut de traitement", demande.date_debut],
+                ["Date de fin de traitement", demande.date_fin],
+                ["Équipement", demande.equipement.Code_machine],
+                ["Analyste", demande.analyste.username]
+            ]
+
+            if demande.technicien:
+                data.append(["Technicien", demande.technicien.username])
+            if demande.verifiant:
+                data.append(["Vérifié par", demande.verifiant.username])
+
+            table = Table(data, colWidths=[150, 350], spaceBefore=20, spaceAfter=20)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ]))
+
+            elements.append(table)
+            doc.build(elements)
+            return response
+        except Demande.DoesNotExist:
+            return HttpResponse("Demande not found", status=404)
+

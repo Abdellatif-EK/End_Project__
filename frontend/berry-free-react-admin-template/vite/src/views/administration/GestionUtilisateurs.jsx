@@ -59,7 +59,7 @@ const GestionUtilisateurs = () => {
   const initialValues = {
     email: '',
     username: '',
-    role: 'analyst',
+    role: '',
   };
 
   const validationSchema = Yup.object({
@@ -81,7 +81,7 @@ const GestionUtilisateurs = () => {
     const url = modalMode === 'edit' ? `http://localhost:8000/Employe/${currentUser.id}/` : 'http://localhost:8000/register';
     const method = modalMode === 'edit' ? axios.put : axios.post;
     
-    //console.log('Submitting data:', values);
+    console.log('Submitting data:', values);
     
     method(url, values)
       .then((response) => {

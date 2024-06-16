@@ -149,7 +149,7 @@ class Demande(models.Model):
         ('nouvelle', 'nouvelle'),
         ('en_cours', 'en_cours'),
         ('verifie','verifie'),
-        ('reouverture','reouverture'),
+        ('invalide','invalide'),
         ('traite','traite'),
         ('non_faisable','non_faisable'),
     ]
@@ -162,8 +162,29 @@ class Demande(models.Model):
     equipement = models.ForeignKey('Equipement', on_delete=models.CASCADE)
     analyste = models.ForeignKey('Employe', on_delete=models.CASCADE,related_name='analyste')
     technicien = models.ForeignKey('Employe', on_delete=models.CASCADE, null=True, blank=True,related_name='technicien')
+    # is this a good name for the guy that verify the demande
+    verifiant = models.ForeignKey('Employe', on_delete=models.CASCADE, null=True, blank=True,related_name='verifiant')
     
     def __str__(self):
         return f'Demande {self.id} - {self.date_demande} - {self.equipement.appareil} - {self.etat}'
+    
+    
+class Maintenance(models.Model):
+    Etat_CHOICES=[
+        ('nouvelle','nouvelle'),
+        ('en_cours','en_cours'),
+        ('termine','termine')
+    ]
+    
+    technicien = models.ForeignKey('Employe', on_delete=models.CASCADE, null=True, blank=True)
+    equipement = models.ForeignKey('Equipement', on_delete=models.CASCADE)
+    date_debut = models.DateField(null=True)
+    date_fin = models.DateField(null=True)
+    description = models.CharField(max_length=500, null=False)
+    etat = models.CharField(max_length=30, choices=Etat_CHOICES, default=Etat_CHOICES[0][0])
+    
+    def __str__(self):
+        return f'Maintenance {self.id} - {self.etat}'
+    
 
 
