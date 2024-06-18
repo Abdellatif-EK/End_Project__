@@ -6,7 +6,7 @@ from Labo_app.models import Employe, Equipement, Laboratoire,Unite,Categorie
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import EmployeSerializer, MatriceSerializer
+from .serializers import EmplacementSerializer, EmployeSerializer, MatriceSerializer
 from rest_framework.exceptions import AuthenticationFailed 
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -16,7 +16,7 @@ from .validations import custom_validation, validate_email, validate_password
 from rest_framework.authtoken.models import Token  # Import Token model
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .models import Matrice
+from .models import Emplacement, Matrice
 from .serializers import MatriceSerializer,CategorieSerializer
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser , FormParser
@@ -757,4 +757,34 @@ class DemandePDFView(View):
             return response
         except Demande.DoesNotExist:
             return HttpResponse("Demande not found", status=404)
+        
+class CreateEmplacementView(View):
+    def post(self, request, equipement_id):
+        try:
+            equipement = Equipement.objects.get(id=equipement_id)
+        except Equipement.DoesNotExist:
+            return JsonResponse({'error': 'Equipement not found'}, status=404)
+
+        emplacement_data = request.POST.copy()
+        emplacement_data['Equipement'] = equipement.id
+
+        serializer = EmplacementSerializer(data=emplacement_data)
+        if serializer.is_valid():
+            emplacement = serializer.save()
+            return JsonResponse({'message': 'Emplacement created successfully', 'emplacement_id': emplacement.id}, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+class GetEmplacementByEquipement(View):
+    def get(self, request, equipement_id):
+        try:
+            equipement = Equipement.objects.get(id=equipement_id)
+            emplacement = Emplacement.objects.get(Equipement=equipement)
+            serializer = EmplacementSerializer(emplacement)
+            return JsonResponse(serializer.data, safe=False)
+        except Equipement.DoesNotExist:
+            return JsonResponse({'error': 'Equipement not found'}, status=404)
+        except Emplacement.DoesNotExist:
+            return JsonResponse({'error': 'Emplacement not found'}, status=404)
+
+
 

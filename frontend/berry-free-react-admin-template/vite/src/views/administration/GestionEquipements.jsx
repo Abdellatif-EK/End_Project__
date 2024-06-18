@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { Link } from 'react-router-dom';
 import {
   Box, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TablePagination, TableRow, TableSortLabel, Toolbar,
@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import MainCard from 'ui-component/cards/MainCard';
 import SendIcon from '@mui/icons-material/Send';
+import RoomIcon from '@mui/icons-material/Room';
 import { MuiFileInput } from 'mui-file-input';
 
 const GestionEquipements = () => {
@@ -329,64 +330,63 @@ const GestionEquipements = () => {
 
   return (
     <MainCard>
-        <Box sx={{ width: '100%' }}>
-        
-            <Typography variant="h1" gutterBottom>
-                Gestion des Équipements
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                <TextField
-                label="Recherche des équipements"
-                variant="outlined"
-                value={searchTerm}
-                onChange={handleSearch}
-                fullWidth
-                sx={{ marginRight: 2 }}
-                />
-                <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleAddEquipement}
-                sx={{ height: '56px' }} // Match the height of the TextField
-                >
-                Ajouter Equipement
-                </Button>
-            </Box>
-                <Paper sx={{ width: '100%', mb: 2 }}>
-                    <Toolbar>
-                    {selected.length > 0 ? (
-                        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-                        {selected.length} selected
-                        </Typography>
-                    ) : (
-                        <Typography sx={{ flex: '1 1 100%' }} variant="h3" id="tableTitle" component="div">
-                        Liste des equipements
-                        </Typography>
-                    )}
-                    {selected.length > 0 ? (
-                        <Tooltip title="Delete">
-                        <IconButton>
-                            <DeleteIcon />
-                        </IconButton>
-                        </Tooltip>
-                    ) : (
-                        <Tooltip title="Filter list">
-                        <IconButton>
-                            <FilterListIcon />
-                        </IconButton>
-                        </Tooltip>
-                    )}
-                    </Toolbar>
-                    <TableContainer>
-                        <Table
-                            sx={{ minWidth: 750 }}
-                            aria-labelledby="tableTitle"
-                            // size={dense ? 'small' : 'medium'}
-                            size={'small'}
-                        >
-                              <TableHead>
-                                  <TableRow>
-                                      {/* <TableCell padding="checkbox">
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h1" gutterBottom>
+          Gestion des Équipements
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+          <TextField
+            label="Recherche des équipements"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearch}
+            fullWidth
+            sx={{ marginRight: 2 }}
+          />
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleAddEquipement}
+            sx={{ height: '56px' }} // Match the height of the TextField
+          >
+            Ajouter Equipement
+          </Button>
+        </Box>
+        <Paper sx={{ width: '100%', mb: 2 }}>
+          <Toolbar>
+            {selected.length > 0 ? (
+              <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+                {selected.length} selected
+              </Typography>
+            ) : (
+              <Typography sx={{ flex: '1 1 100%' }} variant="h3" id="tableTitle" component="div">
+                Liste des equipements
+              </Typography>
+            )}
+            {selected.length > 0 ? (
+              <Tooltip title="Delete">
+                <IconButton>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Filter list">
+                <IconButton>
+                  <FilterListIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Toolbar>
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+              // size={dense ? 'small' : 'medium'}
+              size={'small'}
+            >
+              <TableHead>
+                <TableRow>
+                  {/* <TableCell padding="checkbox">
                                       <Checkbox
                                           color="primary"
                                           indeterminate={selected.length > 0 && selected.length < filteredEquipements.length}
@@ -396,71 +396,59 @@ const GestionEquipements = () => {
                                       />
                                       </TableCell> */}
 
-                                      <TableCell
-                                      key="appareil"
-                                      align="left"
-                                      padding="normal"
-                                      sortDirection={orderBy === 'appareil' ? order : false}
-                                      >
-                                      <TableSortLabel
-                                          active={orderBy === 'appareil'}
-                                          direction={orderBy === 'appareil' ? order : 'asc'}
-                                          onClick={(e) => handleRequestSort(e, 'appareil')}
-                                      >
-                                          Equipement
-                                          {orderBy === 'appareil' ? (
-                                          <Box component="span" sx={visuallyHidden}>
-                                              {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                          </Box>
-                                          ) : null}
-                                      </TableSortLabel>
-                                      </TableCell>
-                                      <TableCell align="center">Image</TableCell>
-                                      <TableCell
-                                      key="laboratoire"
-                                      align="center"
-                                      padding="normal"
-                                      sortDirection={orderBy === 'laboratoire' ? order : false}
-                                      >
-                                      <TableSortLabel
-                                          active={orderBy === 'laboratoire'}
-                                          direction={orderBy === 'laboratoire' ? order : 'asc'}
-                                          onClick={(e) => handleRequestSort(e, 'laboratoire')}
-                                      >
-                                          Laboratoire
-                                          {orderBy === 'laboratoire' ? (
-                                          <Box component="span" sx={visuallyHidden}>
-                                              {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                          </Box>
-                                          ) : null}
-                                      </TableSortLabel>
-                                      </TableCell>
-                                      <TableCell align="center">Code Machine</TableCell>
-                                      <TableCell align="center">Model</TableCell>
-                                      <TableCell align="center">Etat</TableCell>
-                                      <TableCell align="center">Sauvegarde</TableCell>
-                                      <TableCell align="center">Actions</TableCell>
-                                  </TableRow>
-                              </TableHead>
+                  <TableCell key="appareil" align="left" padding="normal" sortDirection={orderBy === 'appareil' ? order : false}>
+                    <TableSortLabel
+                      active={orderBy === 'appareil'}
+                      direction={orderBy === 'appareil' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'appareil')}
+                    >
+                      Equipement
+                      {orderBy === 'appareil' ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell align="center">Image</TableCell>
+                  <TableCell key="laboratoire" align="center" padding="normal" sortDirection={orderBy === 'laboratoire' ? order : false}>
+                    <TableSortLabel
+                      active={orderBy === 'laboratoire'}
+                      direction={orderBy === 'laboratoire' ? order : 'asc'}
+                      onClick={(e) => handleRequestSort(e, 'laboratoire')}
+                    >
+                      Laboratoire
+                      {orderBy === 'laboratoire' ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell align="center">Code Machine</TableCell>
+                  <TableCell align="center">Model</TableCell>
+                  <TableCell align="center">Etat</TableCell>
+                  <TableCell align="center">Sauvegarde</TableCell>
+                  <TableCell align="center">Actions</TableCell>
+                </TableRow>
+              </TableHead>
 
+              <TableBody>
+                {visibleRows.map((equipement, index) => {
+                  const isItemSelected = isSelected(equipement.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                              <TableBody>
-                              {visibleRows.map((equipement, index) => {
-                                  const isItemSelected = isSelected(equipement.id);
-                                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                                  return (
-                                    <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, equipement.id)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={equipement.id}
-                                        selected={isItemSelected}
-                                        
-                                    >
-                                        {/* <TableCell padding="checkbox">
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, equipement.id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={equipement.id}
+                      selected={isItemSelected}
+                    >
+                      {/* <TableCell padding="checkbox">
                                         <Checkbox
                                             color="primary"
                                             checked={isItemSelected}
@@ -468,390 +456,392 @@ const GestionEquipements = () => {
                                         />
                                         </TableCell> */}
 
+                      <TableCell component="th" id={labelId} scope="row" padding="none" align="center">
+                        {equipement.appareil}
+                      </TableCell>
 
+                      <TableCell>
+                        {equipement.image && (
+                          <img
+                            src={`http://127.0.0.1:8000${equipement.image}`}
+                            alt={equipement.appareil}
+                            style={{ width: '100px', height: '80px' }}
+                          />
+                        )}
+                      </TableCell>
 
-                                        <TableCell component="th" id={labelId} scope="row" padding="none" align="center">
-                                        {equipement.appareil}
-                                        </TableCell>
+                      <TableCell align="center">{getLaboratoireName(equipement.laboratoire)}</TableCell>
 
-                                        <TableCell>
-                                {equipement.image && (
-                                  <img
-                                    src={`http://127.0.0.1:8000${equipement.image}`}
-                                    alt={equipement.appareil}
-                                    style={{ width: '100px', height: '80px' }}
-                                  />
-                                )}
-                                        </TableCell>
+                      <TableCell align="center">{equipement.Code_machine}</TableCell>
 
-                                        <TableCell align="center">{getLaboratoireName(equipement.laboratoire)}</TableCell>
+                      <TableCell align="center">{equipement.modele}</TableCell>
 
-                                        <TableCell align="center">{equipement.Code_machine}</TableCell>
+                      <TableCell align="center">{equipement.Etat}</TableCell>
 
-                                        <TableCell align="center">{equipement.modele}</TableCell>
+                      <TableCell align="center">{equipement.Sauvegarde}</TableCell>
 
-                                        <TableCell align="center">{equipement.Etat}</TableCell>
-
-                                        <TableCell align="center">{equipement.Sauvegarde}</TableCell>
-
-                                        <TableCell align="center">
-                                            <Grid container spacing={1} direction="row">
-                                                
-                                                <Grid item xs={4}>
-                                                  {/* <Button display="block" variant="contained" color="primary" onClick={() => handleShowDetails(equipement)}>
+                      <TableCell align="center">
+                        <Grid container spacing={1} direction="row">
+                          <Grid item xs={3}>
+                            {/* <Button display="block" variant="contained" color="primary" onClick={() => handleShowDetails(equipement)}>
                                                     Détails
                                                   </Button> */}
-                                                  <IconButton aria-label="Detail" onClick={() => handleShowDetails(equipement)}>
-                                                        <PreviewIcon color="primary" />
-                                                  </IconButton>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                  {/* <Button display="block" variant="contained" color="primary" onClick={() => handleModifyEquipement(equipement)}>
+                            <IconButton aria-label="Detail" onClick={() => handleShowDetails(equipement)}>
+                              <PreviewIcon color="primary" />
+                            </IconButton>
+                          </Grid>
+                          <Grid item xs={3}>
+                            {/* <Button display="block" variant="contained" color="primary" onClick={() => handleModifyEquipement(equipement)}>
                                                     Modifier
                                                   </Button> */}
-                                                  <IconButton aria-label="modifier" onClick={() => handleModifyEquipement(equipement)}>
-                                                        <EditIcon color="primary" />
-                                                  </IconButton>
-                                                  
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                  {/* <Button display="block" variant="contained" color="secondary" onClick={() => handleDeleteEquipement(equipement.id)} startIcon={<DeleteIcon />}>
+                            <IconButton aria-label="modifier" onClick={() => handleModifyEquipement(equipement)}>
+                              <EditIcon color="primary" />
+                            </IconButton>
+                          </Grid>
+                          <Grid item xs={3}>
+                            {/* <Button display="block" variant="contained" color="secondary" onClick={() => handleDeleteEquipement(equipement.id)} startIcon={<DeleteIcon />}>
                                                     Supprimer
                                                   </Button> */}
-                                                      <IconButton aria-label="delete" onClick={() => handleDeleteEquipement(equipement.id)}>
-                                                        <DeleteIcon color="primary" />
-                                                      </IconButton>
-                                                </Grid>
-                                            </Grid>
-                                        </TableCell>
+                            <IconButton aria-label="delete" onClick={() => handleDeleteEquipement(equipement.id)}>
+                              <DeleteIcon color="primary" />
+                            </IconButton>
+                          </Grid>
 
-                                    </TableRow>
-                                  );
-                              })}
-                              {emptyRows > 0 && (
-                                  <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                                  <TableCell colSpan={6} />
-                                  </TableRow>
-                              )}
-                              </TableBody>
-
-
-
-                        </Table>
-                    </TableContainer>
-
-                    <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={filteredEquipements.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
-
-                <FormControlLabel
-                    control={<Switch checked={dense} onChange={handleChangeDense} />}
-                    label="Dense padding"
-                />
-
-                <Modal open={showModal} onClose={handleCloseModal}>
-                        <Box
-                        component="form"
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '1rem',
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            p: 4,
-                            minWidth: 300,
-                        }}
-                        onSubmit={handleSubmit}
-                        >
-                        <Typography variant="h2" component="h2">
-                        {currentEquipement  ? 'Modifier Equipement' : 'Ajouter Equipement'}
-                        </Typography>
-
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Appareil"
-                                variant="outlined"
-                                name="appareil"
-                                value={formData.appareil}
-                                onChange={handleInputChange}
-                                fullWidth
-                                required
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <FormControl fullWidth >
-                            <InputLabel id="laboratoire-label">Laboratoire</InputLabel>
-                            <Select
-                                labelId="laboratoire-label"
-                                name="laboratoire"
-                                value={formData.laboratoire}
-                                onChange={handleInputChange}
-                                required
+                          <Grid item xs={3}>
+                            <IconButton
+                              aria-label="emplacement"
+                              component={Link}
+                              to={`/administration/affecter-emplacement/${equipement.id}`}
                             >
-                                {laboratoires.map((laboratoire) => (
-                                <MenuItem key={laboratoire.id} value={laboratoire.id}>
-                                    {laboratoire.name}
-                                </MenuItem>
-                                ))}
-                            </Select>
-                            </FormControl>
-
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Etat"
-                                variant="outlined"
-                                name="Etat"
-                                value={formData.Etat}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Modèle"
-                                variant="outlined"
-                                name="modele"
-                                value={formData.modele}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Code Machine"
-                                variant="outlined"
-                                name="Code_machine"
-                                value={formData.Code_machine}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Password"
-                                variant="outlined"
-                                name="Password"
-                                value={formData.Password}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Sauvegarde"
-                                variant="outlined"
-                                name="Sauvegarde"
-                                value={formData.Sauvegarde}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Connecté au Réseau"
-                                variant="outlined"
-                                name="Connecte_reseau"
-                                value={formData.Connecte_reseau}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Connecté à l'AD"
-                                variant="outlined"
-                                name="Connecte_AD"
-                                value={formData.Connecte_AD}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Connecté à l'imprimante"
-                                variant="outlined"
-                                name="connecté_imprimante"
-                                value={formData.connecté_imprimante}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Planning de Sauvegarde"
-                                variant="outlined"
-                                name="planning_sauvegarde"
-                                value={formData.planning_sauvegarde}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Logiciel"
-                                variant="outlined"
-                                name="Logiciel"
-                                value={formData.Logiciel}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Version Logiciel"
-                                variant="outlined"
-                                name="version_logiciel"
-                                value={formData.version_logiciel}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Date d'Installation"
-                                variant="outlined"
-                                name="date_installation"
-                                value={formData.date_installation}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Version Windows"
-                                variant="outlined"
-                                name="Version_windows"
-                                value={formData.Version_windows}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Situation"
-                                variant="outlined"
-                                name="Situation"
-                                value={formData.Situation}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Fournisseur"
-                                variant="outlined"
-                                name="Fournisseur"
-                                value={formData.Fournisseur}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="État Matériel Informatique"
-                                variant="outlined"
-                                name="Etat_materiel_informatique"
-                                value={formData.Etat_materiel_informatique}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <TextField
-                                label="Numéro de Série"
-                                variant="outlined"
-                                name="numero_serie"
-                                value={formData.numero_serie}
-                                onChange={handleInputChange}
-                                fullWidth
-                            />
-                            </Grid>
-                            <Grid item xs={6}>
-                            <input type="file" name="image" accept="image/*" onChange={handleInputChange} />
-                            {/* <MuiFileInput name="image" value={locationImg} onChange={handleLocationImgChange} multiple size='small' fullWidth /> */}
-                            
-                            </Grid>
+                              <RoomIcon color="primary" />
+                            </IconButton>
+                          </Grid>
                         </Grid>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-                        <Button type="submit" variant="contained" color="primary" endIcon={<SendIcon />}>
-                            {currentEquipement  ? 'Modifier' : 'Ajouter'}
-                        </Button>
-                        </Box>
-                </Modal>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredEquipements.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
 
-                <Modal open={showDeleteModal} onClose={handleCloseDeleteModal}>
-                    <Box sx={{ p: 4, maxWidth: 400, margin: 'auto', marginTop: '10%', backgroundColor: 'white', borderRadius: 2 }}>
-                    <Typography variant="h6" component="h2">
-                        Confirmer Suppression
-                    </Typography>
-                    <Typography sx={{ mt: 2 }}>
-                        Est ce que vous etes sur?
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                        <Button onClick={handleCloseDeleteModal} sx={{ mr: 1 }}>
-                        Annuler
-                        </Button>
-                        <Button onClick={confirmDeleteEquipement} variant="contained" color="secondary">
-                        Supprimer
-                        </Button>
-                    </Box>
-                    </Box>
-                </Modal>
+        <FormControlLabel control={<Switch checked={dense} onChange={handleChangeDense} />} label="Dense padding" />
 
-                <Modal open={showDetailsModal} onClose={() => setShowDetailsModal(false)}>
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4,
-                        minWidth: 300,
-                      }}
-                    >
-                        <Typography variant="h6" component="h2">
-                          Détails de l'équipement
-                        </Typography>
-                        {currentEquipement && (
-                          <Box sx={{ mt: 2 }}>
-                            <Typography><strong>Appareil:</strong> {currentEquipement.appareil}</Typography>
-                            <Typography><strong>Laboratoire:</strong> {getLaboratoireName(currentEquipement.laboratoire)}</Typography>
-                            <Typography><strong>État:</strong> {currentEquipement.Etat}</Typography>
-                            <Typography><strong>Modèle:</strong> {currentEquipement.modele}</Typography>
-                            <Typography><strong>Code Machine:</strong> {currentEquipement.Code_machine}</Typography>
-                            <Typography><strong>Image:</strong></Typography>
-                            {currentEquipement.image && (
-                              <img
-                                src={`http://127.0.0.1:8000${currentEquipement.image}`}
-                                alt={currentEquipement.appareil}
-                                style={{ width: '100px', height: '100px' }}
-                              />
-                            )}
-                          </Box>
-                        )}
-                        <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={() => setShowDetailsModal(false)}>
-                          Fermer
-                        </Button>
-                    </Box>
-                </Modal>
+        <Modal open={showModal} onClose={handleCloseModal}>
+          <Box
+            component="form"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              minWidth: 300
+            }}
+            onSubmit={handleSubmit}
+          >
+            <Typography variant="h2" component="h2">
+              {currentEquipement ? 'Modifier Equipement' : 'Ajouter Equipement'}
+            </Typography>
 
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  label="Appareil"
+                  variant="outlined"
+                  name="appareil"
+                  value={formData.appareil}
+                  onChange={handleInputChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="laboratoire-label">Laboratoire</InputLabel>
+                  <Select labelId="laboratoire-label" name="laboratoire" value={formData.laboratoire} onChange={handleInputChange} required>
+                    {laboratoires.map((laboratoire) => (
+                      <MenuItem key={laboratoire.id} value={laboratoire.id}>
+                        {laboratoire.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="Etat" variant="outlined" name="Etat" value={formData.Etat} onChange={handleInputChange} fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField label="Modèle" variant="outlined" name="modele" value={formData.modele} onChange={handleInputChange} fullWidth />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Code Machine"
+                  variant="outlined"
+                  name="Code_machine"
+                  value={formData.Code_machine}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Password"
+                  variant="outlined"
+                  name="Password"
+                  value={formData.Password}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Sauvegarde"
+                  variant="outlined"
+                  name="Sauvegarde"
+                  value={formData.Sauvegarde}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Connecté au Réseau"
+                  variant="outlined"
+                  name="Connecte_reseau"
+                  value={formData.Connecte_reseau}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Connecté à l'AD"
+                  variant="outlined"
+                  name="Connecte_AD"
+                  value={formData.Connecte_AD}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Connecté à l'imprimante"
+                  variant="outlined"
+                  name="connecté_imprimante"
+                  value={formData.connecté_imprimante}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Planning de Sauvegarde"
+                  variant="outlined"
+                  name="planning_sauvegarde"
+                  value={formData.planning_sauvegarde}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Logiciel"
+                  variant="outlined"
+                  name="Logiciel"
+                  value={formData.Logiciel}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Version Logiciel"
+                  variant="outlined"
+                  name="version_logiciel"
+                  value={formData.version_logiciel}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Date d'Installation"
+                  variant="outlined"
+                  name="date_installation"
+                  value={formData.date_installation}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Version Windows"
+                  variant="outlined"
+                  name="Version_windows"
+                  value={formData.Version_windows}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Situation"
+                  variant="outlined"
+                  name="Situation"
+                  value={formData.Situation}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Fournisseur"
+                  variant="outlined"
+                  name="Fournisseur"
+                  value={formData.Fournisseur}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="État Matériel Informatique"
+                  variant="outlined"
+                  name="Etat_materiel_informatique"
+                  value={formData.Etat_materiel_informatique}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Numéro de Série"
+                  variant="outlined"
+                  name="numero_serie"
+                  value={formData.numero_serie}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <input type="file" name="image" accept="image/*" onChange={handleInputChange} />
+                {/* <MuiFileInput name="image" value={locationImg} onChange={handleLocationImgChange} multiple size='small' fullWidth /> */}
+              </Grid>
+            </Grid>
 
-        </Box> 
+            <Button type="submit" variant="contained" color="primary" endIcon={<SendIcon />}>
+              {currentEquipement ? 'Modifier' : 'Ajouter'}
+            </Button>
+          </Box>
+        </Modal>
+
+        <Modal open={showDeleteModal} onClose={handleCloseDeleteModal}>
+          <Box sx={{ p: 4, maxWidth: 400, margin: 'auto', marginTop: '10%', backgroundColor: 'white', borderRadius: 2 }}>
+            <Typography variant="h6" component="h2">
+              Confirmer Suppression
+            </Typography>
+            <Typography sx={{ mt: 2 }}>Est ce que vous etes sur?</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button onClick={handleCloseDeleteModal} sx={{ mr: 1 }}>
+                Annuler
+              </Button>
+              <Button onClick={confirmDeleteEquipement} variant="contained" color="secondary">
+                Supprimer
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+        <Modal open={showDetailsModal} onClose={() => setShowDetailsModal(false)}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              minWidth: 300,
+              borderRadius: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+              Détails de l'équipement
+            </Typography>
+            {currentEquipement && (
+              <Box sx={{ width: '100%' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  {currentEquipement.image && (
+                    <img
+                      src={`http://127.0.0.1:8000${currentEquipement.image}`}
+                      alt={currentEquipement.appareil}
+                      style={{ width: '150px', height: '150px', borderRadius: '8px' }}
+                    />
+                  )}
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle1">
+                    <strong>Appareil:</strong>
+                  </Typography>
+                  <Typography variant="body1">{currentEquipement.appareil}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle1">
+                    <strong>Laboratoire:</strong>
+                  </Typography>
+                  <Typography variant="body1">{getLaboratoireName(currentEquipement.laboratoire)}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle1">
+                    <strong>État:</strong>
+                  </Typography>
+                  <Typography variant="body1">{currentEquipement.Etat}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle1">
+                    <strong>Modèle:</strong>
+                  </Typography>
+                  <Typography variant="body1">{currentEquipement.modele}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle1">
+                    <strong>Code Machine:</strong>
+                  </Typography>
+                  <Typography variant="body1">{currentEquipement.Code_machine}</Typography>
+                </Box>
+              </Box>
+            )}
+            <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={() => setShowDetailsModal(false)}>
+              Fermer
+            </Button>
+          </Box>
+        </Modal>
+      </Box>
     </MainCard>
   );
 };

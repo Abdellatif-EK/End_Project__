@@ -187,4 +187,10 @@ class Maintenance(models.Model):
         return f'Maintenance {self.id} - {self.etat}'
     
 
-
+class Emplacement(models.Model):
+    Equipement = models.ForeignKey('Equipement', on_delete=models.CASCADE, null=True, blank=True)
+    horizontal = models.FloatField()
+    vertical = models.FloatField()
+    
+    def __str__(self):
+        return f'Emplacement {self.id} :  {self.horizontal} - {self.vertical}'

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Card, CardContent, CardMedia, Typography, CircularProgress, Grid, Container, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
+
 const AppareilDetail = () => {
   const { id } = useParams();
   const [equipement, setequipement] = useState(null);
@@ -21,86 +23,90 @@ const AppareilDetail = () => {
 
   if (loading) {
     return (
-      <div className="container mt-4">
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      </div>
+      <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Container>
     );
   }
 
   if (!equipement) {
     return (
-      <div className="container mt-4">
-        <h5>Equipement not found</h5>
-      </div>
+      <Container sx={{ mt: 4 }}>
+        <Typography variant="h5">Equipement not found</Typography>
+      </Container>
     );
   }
 
   return (
     <MainCard>
-    <div className="container mt-4">
-      <h1 style={{ paddingLeft: '5%' }}>Pharma 5 Smart Factory</h1>
-      <div className="container-1">
-        <div className="row row-cols-1 row-cols-md-2 g-4">
-          <div className="col">
-            <h3 className="para">Voilà l'équipement dont nous disposons</h3>
-            <p style={{ fontSize: '15px' }}>L'emplacement : <strong>{equipement.Emplacement}</strong></p>
-            {equipement.image && (
-              <a href={`http://127.0.0.1:8000${equipement.image}`}>
-                <img
-                  src={`http://127.0.0.1:8000${equipement.image}`}
-                  alt={equipement.Appareil}
-                  style={{ width: '400px', height: '400px', paddingLeft: '8%', paddingBottom: '5px' }}
-                />
-              </a>
-            )}
-          </div>
-          <div className="col" style={{ fontSize: '13px' }}>
-            <ul>
-              <li>Appareil : <strong>{equipement.Appareil}</strong></li>
-              <li>Code machine : <strong>{equipement.Code_machine}</strong></li>
-              <li>Modèle : <strong>{equipement.modele}</strong></li>
-              <li>Situation : <strong>{equipement.Situation}</strong></li>
-              <li>Numéro de série : <strong>{equipement.numero_serie}</strong></li>
-              <li>Fournisseur : <strong>{equipement.Fournisseur}</strong></li>
-              <li>Etat : <strong>{equipement.Etat}</strong></li>
-              <li>Logiciel : <strong>{equipement.Logiciel}</strong></li>
-              <li>Version du logiciel : <strong>{equipement.version_logiciel}</strong></li>
-              <li>Password : <strong>{equipement.Password}</strong></li>
-              <li>Matrice d'accès : <strong>{equipement.matrice_acces}</strong></li>
-              <li>Version Windows : <strong>{equipement.Version_windows}</strong></li>
-              <li>Etat du matériel informatique : <strong>{equipement.Etat_materiel_informatique}</strong></li>
-              <li>Sauvegarde : <strong>{equipement.Sauvegarde}</strong></li>
-              <li>Planning de Sauvegarde : <strong>{equipement.planning_sauvegarde}</strong></li>
-              <li>Documentation qualification : <strong>{equipement.DOC_qualification}</strong></li>
-              <li>Connexion au réseau : <strong>{equipement.Connecte_reseau}</strong></li>
-              <li>Connexion à : <strong>{equipement.Connexion_a}</strong></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div className="container-1">
-        <p>Les images</p>
-        <div className="row row-cols-1 row-cols-md-2 g-4">
-          {equipement.additional_images && equipement.additional_images.map((image, index) => (
-            <div className="col" key={index}>
-              <a href={`http://127.0.0.1:8000${image.url}`}>
-                <img
-                  src={`http://127.0.0.1:8000${image.url}`}
-                  alt={`Image ${index}`}
-                  style={{ width: '400px', height: '400px', paddingBottom: '5px' }}
-                />
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+      <Container sx={{ mt: 4 }}>
+        <Typography variant="h3" gutterBottom>Pharma 5 Smart Factory</Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h5" gutterBottom>Voilà l'équipement dont nous disposons</Typography>
+                <Typography variant="body1">L'emplacement : <strong>Laboratoire de controle</strong></Typography>
+                {equipement.image && (
+                  <CardMedia
+                    component="img"
+                    image={`http://127.0.0.1:8000${equipement.image}`}
+                    alt={equipement.Appareil}
+                    sx={{ width: '100%', height: 'auto', mt: 2 }}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Details</Typography>
+                <Box component="ul" sx={{ pl: 2 }}>
+                  <Typography component="li">Appareil : <strong>{equipement.Appareil}</strong></Typography>
+                  <Typography component="li">Code machine : <strong>{equipement.Code_machine}</strong></Typography>
+                  <Typography component="li">Modèle : <strong>{equipement.modele}</strong></Typography>
+                  <Typography component="li">Situation : <strong>{equipement.Situation}</strong></Typography>
+                  <Typography component="li">Numéro de série : <strong>{equipement.numero_serie}</strong></Typography>
+                  <Typography component="li">Fournisseur : <strong>{equipement.Fournisseur}</strong></Typography>
+                  <Typography component="li">Etat : <strong>{equipement.Etat}</strong></Typography>
+                  <Typography component="li">Logiciel : <strong>{equipement.Logiciel}</strong></Typography>
+                  <Typography component="li">Version du logiciel : <strong>{equipement.version_logiciel}</strong></Typography>
+                  <Typography component="li">Password : <strong>{equipement.Password}</strong></Typography>
+                  <Typography component="li">Matrice d'accès : <strong>{equipement.matrice_acces}</strong></Typography>
+                  <Typography component="li">Version Windows : <strong>{equipement.Version_windows}</strong></Typography>
+                  <Typography component="li">Etat du matériel informatique : <strong>{equipement.Etat_materiel_informatique}</strong></Typography>
+                  <Typography component="li">Sauvegarde : <strong>{equipement.Sauvegarde}</strong></Typography>
+                  <Typography component="li">Planning de Sauvegarde : <strong>{equipement.planning_sauvegarde}</strong></Typography>
+                  <Typography component="li">Documentation qualification : <strong>{equipement.DOC_qualification}</strong></Typography>
+                  <Typography component="li">Connexion au réseau : <strong>{equipement.Connecte_reseau}</strong></Typography>
+                  <Typography component="li">Connexion à : <strong>{equipement.Connexion_a}</strong></Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+        <Box sx={{ mt: 4 }}>
+          {/* <Typography variant="h6" gutterBottom>Les images</Typography> */}
+          <Grid container spacing={4}>
+            {equipement.additional_images && equipement.additional_images.map((image, index) => (
+              <Grid item xs={12} md={6} key={index}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    image={`http://127.0.0.1:8000${image.url}`}
+                    alt={`Image ${index}`}
+                    sx={{ width: '100%', height: 'auto' }}
+                  />
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Container>
     </MainCard>
   );
 };
 
 export default AppareilDetail;
+

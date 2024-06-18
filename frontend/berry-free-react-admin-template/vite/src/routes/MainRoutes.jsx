@@ -26,7 +26,10 @@ const DemandesTraitees_Tech = Loadable(lazy(() => import('views/demandes/Demande
 const GestionCategories = Loadable(lazy(() => import('views/administration/GestionCategories')));
 const GestionUnite = Loadable(lazy(() => import('views/administration/GestionUnites')));
 const Logout = Loadable(lazy(() => import('views/profile/Logout')));
-const Profile = Loadable(lazy(()=>import('views/profile/Profile')))
+const Profile = Loadable(lazy(()=>import('views/profile/Profile')));
+const AffecterEmplacement = Loadable(lazy(() => import('views/administration/AffecterEmplacement')));
+const SuiviEmplacement = Loadable(lazy(() => import('views/acceuil/SuiviEmplacement')));
+const Emplacement = Loadable(lazy(() => import('views/acceuil/Emplacement')));
 const MainRoutes = {
   path: '/',
   element: (
@@ -38,6 +41,8 @@ const MainRoutes = {
     { path: '/', element: <Acceuil /> },
     // { path: '/', element: <DashboardDefault /> },
     { path: 'acceuil', children: [{ path: 'default', element: <Acceuil /> }] },
+    { path: 'acceuil', children: [{ path: 'emplacement', element: <SuiviEmplacement /> }] },
+    { path: 'acceuil', children: [{ path: 'place', element: <Emplacement /> }] },
     { path: 'dashboard', children: [{ path: 'default', element: <DashboardDefault /> }] },
     { path: 'utils', children: [{ path: 'util-typography', element: <UtilsTypography /> }] },
     { path: 'utils', children: [{ path: 'util-color', element: <UtilsColor /> }] },
@@ -49,6 +54,7 @@ const MainRoutes = {
     { path: 'administration', children: [{ path: 'gestion-matrices', element: <GestionMatrices /> }] },
     { path: 'administration', children: [{ path: 'gestion-categories', element: <GestionCategories /> }] },
     { path: 'administration', children: [{ path: 'gestion-unite', element: <GestionUnite /> }] },
+    { path: 'administration', children: [{ path: 'affecter-emplacement/:id', element: <AffecterEmplacement /> }] },
     {
       path: 'components',
       children: [

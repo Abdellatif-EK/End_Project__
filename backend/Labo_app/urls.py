@@ -1,12 +1,12 @@
 from django.urls import path, re_path, include
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import Demande_Analyste, EquipementViewSet,UniteViewSet,LaboratoireViewSet,EmployeViewSet,DemandeViewSet,CategorieViewSet
+from .views import CreateEmplacementView, Demande_Analyste, EquipementViewSet,UniteViewSet,LaboratoireViewSet,EmployeViewSet,DemandeViewSet,CategorieViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import Admin_Add_Equipement , csrf_token_view , Admin_Modify_Equipement,Demande_API,Demande_api
 from .views import DemandeByEquipementView, DemandeByAnalysteView,DemandeByTechnicienView,DemandesPasTraiteeView,DemandesTraiteesView,DemandesNonFaisableView,DemandesEnCoursView,DemandesEnAttenteView,DemandeVerifieView
-from .views import DemandePDFView
+from .views import DemandePDFView,GetEmplacementByEquipement
 
 router = DefaultRouter()
 router.register(r'Equipement', EquipementViewSet)
@@ -78,6 +78,8 @@ urlpatterns = [
     path('demande/analyste/traite/<int:pk>/',Demande_Analyste.as_view(),name='demande-analyste-traite'),
     
     path('demande/<int:demande_id>/pdf/', DemandePDFView.as_view(), name='demande_pdf'),
+    
+    path('emplacement/creer/<int:equipement_id>/', CreateEmplacementView.as_view(), name="emplacement_creer"),
     
     path('csrf-token/', csrf_token_view, name='csrf-token'),
     path('', include(router.urls)),  # Include the router's URLs
