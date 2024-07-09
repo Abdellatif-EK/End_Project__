@@ -190,26 +190,42 @@ const Matrice = () => {
       <Toolbar>
           <Typography variant="h2">La matrice d'accés de l'équipement "{equipement.Code_machine}"</Typography>
         </Toolbar>  
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-        <TextField
-          label="Recherche des Analystes"
-          variant="outlined"
-          value={searchTerm}
-          onChange={handleSearch}
-          fullWidth
-          sx={{ marginRight: 2 }}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleGiveAccess}
-          sx={{ height: '56px' }} // Match the height of the TextField
-        >
-          Donner Acces
-        </Button>
-      </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+          <TextField
+            label="Recherche des Analystes"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearch}
+            fullWidth
+            sx={{ marginRight: 2 }}
+          />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleGiveAccess}
+              sx={{ height: '56px' }} // Match the height of the TextField
+            >
+              Donner Acces
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ height: '56px' }}
+            >
+              Exporter en PDF
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ height: '56px' }}
+            >
+              Exporter en Excel
+            </Button>
+  </Box>
+</Box>
+
       <TableContainer>
-        
         <Table>
           <TableHead>
             <TableRow>
@@ -217,7 +233,7 @@ const Matrice = () => {
               <TableCell>Email</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Date acces</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>Retirer Acces</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

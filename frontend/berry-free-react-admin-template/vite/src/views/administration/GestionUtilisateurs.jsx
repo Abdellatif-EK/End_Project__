@@ -311,12 +311,13 @@ const GestionUtilisateurs = () => {
                   as={TextField}
                   name="username"
                   type="text"
-                  label="Username"
+                  label="Nom Complet"
                   fullWidth
                   margin="normal"
                   variant="outlined"
                   helperText={<ErrorMessage name="username" component="div" style={{ color: 'red', fontSize: '1.1em' }} />}
                 />
+
                 <Field
                   as={TextField}
                   name="role"

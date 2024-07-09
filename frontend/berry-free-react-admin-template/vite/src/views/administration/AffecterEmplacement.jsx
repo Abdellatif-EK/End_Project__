@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Container, Typography, Box, Grid } from '@mui/material';
+import { Button, Container, Typography, Box, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { styled } from '@mui/system';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -15,7 +15,8 @@ const ImageContainer = styled('div')({
   position: 'relative',
   '.marqueur': {
     position: 'absolute',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    transition: 'top 0.1s ease, left 0.1s ease'
   },
   '.cart': {
     width: '100%',
@@ -40,8 +41,28 @@ const getCookie = (name) => {
 
 const AffecterEmplacement = () => {
   const { id } = useParams();
-  const [equipementid, setEquipementid] = useState([]);
   const [position, setPosition] = useState({ top: 50, left: 50 });
+  const [existingEmplacement, setExistingEmplacement] = useState(null);
+  const [emplacements, setEmplacements] = useState([]);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchEmplacements = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/Emplacement/`);
+        setEmplacements(response.data);
+        const emplacement = response.data.find(e => e.Equipement === parseInt(id));
+        if (emplacement) {
+          setPosition({ top: emplacement.vertical, left: emplacement.horizontal });
+          setExistingEmplacement(emplacement);
+        }
+      } catch (error) {
+        console.error('Error fetching emplacements:', error);
+      }
+    };
+
+    fetchEmplacements();
+  }, [id]);
 
   const moveMarker = (direction) => {
     setPosition((prevPosition) => {
@@ -66,201 +87,70 @@ const AffecterEmplacement = () => {
     });
   };
 
-  // const requests = newMatrices.map((employeeId) =>
-  //   axios.post('http://127.0.0.1:8000/create-matrice', {
-  //     equipement: id,
-  //     employe: employeeId,
-  //     status: 'actif'
-  //   })
-  // );
-
   const acceptPlacement = async () => {
+    const emplacementData = {
+      Equipement: id,
+      horizontal: position.left,
+      vertical: position.top
+    };
+
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/emplacement/creer/${id}/`, {
-        horizontal: position.left,
-        vertical: position.top
-      });
-      alert('Placement accepted: ' + JSON.stringify(response.data));
+      let response;
+      if (existingEmplacement) {
+        // Update existing emplacement
+        response = await axios.put(`http://127.0.0.1:8000/Emplacement/${existingEmplacement.id}/`, emplacementData);
+      } else {
+        // Create new emplacement
+        response = await axios.post(`http://127.0.0.1:8000/Emplacement/`, emplacementData);
+      }
+
+      if (response.status === 201 || response.status === 200) {
+        alert(`Placement ${existingEmplacement ? 'updated' : 'created'}: ` + JSON.stringify(response.data));
+      }
     } catch (error) {
       alert('Error in placement: ' + error.message);
     }
+  };
+
+  const retirerEmplacement = async () => {
+    try {
+      if (existingEmplacement) {
+        await axios.delete(`http://127.0.0.1:8000/Emplacement/${existingEmplacement.id}/`);
+        // Redirect or update UI after deletion if necessary
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setErrorDialogOpen(true);
+      } else {
+        alert('Error deleting emplacement: ' + error.message);
+      }
+    }
+  };
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
   };
 
   return (
     <MainCard>
       <Container>
         <Typography variant="h1" sx={{ paddingLeft: 0 }}>
-          Pharma 5 Smart Factory
+          Choisir l'emplacement de l'équipement
         </Typography>
         <Typography variant="body1" className="para" sx={{ paddingBottom: 2 }}>
-          La Cartographie du laboratoire <strong>Physico-chimique</strong> avec l'emplacement des différents équipements qui y sont utilisés
+          La Cartographie du laboratoire <strong>Physico-chimique</strong>.
         </Typography>
         <ImageContainer>
           <img src={CartLaboImage} alt="Laboratory" className="cart" />
+          {emplacements
+            .filter((empl) => empl.Equipement !== parseInt(id)) // Filter out the current equipment
+            .map((empl, index) => (
+              <div key={index} className="marqueur" style={{ top: `${empl.vertical}%`, left: `${empl.horizontal}%` }}>
+                <MapMarkerIcon color="blue" />
+              </div>
+            ))}
           <div className="marqueur" style={{ top: `${position.top}%`, left: `${position.left}%` }}>
             <MapMarkerIcon color="primary" />
-          </div>
-          <div className="marqueur" style={{ top: '5%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '5%', left: '15%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '5%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '15%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '30%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '45%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '60%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '75%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '90%', left: '5%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '90%', left: '15%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '90%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '80%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '60%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '45%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '30%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '15%', left: '25%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '65%', left: '40%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '65%', left: '36%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '65%', left: '45%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '50%', left: '60%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '40%', left: '60%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '30%', left: '60%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '20%', left: '60%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '91%', left: '60.4%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '91%', left: '74%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '85%', left: '74%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '85%', left: '83%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '94%', left: '83%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '94%', left: '51%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '86%', left: '51%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '86%', left: '51%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '94%', left: '56%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '94%', left: '42%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '86%', left: '42%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '88%', left: '37%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '83%', left: '37%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '94%', left: '37%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-
-          <div className="marqueur" style={{ top: '65%', left: '66%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '50%', left: '66%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '40%', left: '66%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '30%', left: '66%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '20%', left: '66%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '10%', left: '66%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '65%', left: '75%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '65%', left: '90%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '65%', left: '95%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '50%', left: '95%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '40%', left: '95%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '30%', left: '95%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '20%', left: '95%' }}>
-            <MapMarkerIcon color="blue" />
-          </div>
-          <div className="marqueur" style={{ top: '10%', left: '95%' }}>
-            <MapMarkerIcon color="blue" />
           </div>
         </ImageContainer>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
@@ -286,12 +176,28 @@ const AffecterEmplacement = () => {
             <Button variant="contained" color="primary" onClick={acceptPlacement} size="large" sx={{ marginRight: 2 }}>
               Accepter Emplacement
             </Button>
-            <Button variant="contained" color="primary" onClick={acceptPlacement} size="large" sx={{ marginLeft: 2 }}>
+            <Button variant="contained" color="primary" onClick={retirerEmplacement} size="large" sx={{ marginLeft: 2 }}>
               Retirer Emplacement
             </Button>
           </Box>
         </Grid>
       </Container>
+      <Dialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+      >
+        <DialogTitle>Erreur</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            L'équipement n'a pas d'emplacement.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseErrorDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </MainCard>
   );
 };
